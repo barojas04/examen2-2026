@@ -10,4 +10,8 @@ class Unidad extends Model {
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = ['idUnidad', 'nombre'];
+
+    public function materialUnidades(): \Illuminate\Database\Eloquent\Relations\HasMany {
+        return $this->hasMany(MaterialUnidad::class, 'idUnidad', 'idUnidad');
+    }
 }
