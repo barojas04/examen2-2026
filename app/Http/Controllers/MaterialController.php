@@ -79,4 +79,69 @@ class MaterialController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Actualizar un material existente.
+     */
+    public function update(Request $request, $codigo)
+    {
+        $material = Material::find($codigo);
+
+        if (!$material) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Material no encontrado'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'unidadMedida' => 'sometimes|required|string',
+            'descripcion' => 'sometimes|required|string',
+            'ubicacion' => 'sometimes|required|string',
+            'idCategoria' => 'sometimes|required|string',
+            'nombreCategoria' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::transaction(function () use ($request, $material) {
+                if ($request->has('idCategoria')) {
+                    $categoria = Categoria::firstOrCreate(
+                        ['idCategoria' => $request->idCategoria],
+                        ['nombre' => $request->nombreCategoria ?? 'Categoría ' . $request->idCategoria]
+                    );
+                    $material->idCategoria = $categoria->idCategoria;
+                }
+
+                if ($request->has('unidadMedida')) $material->unidadMedida = $request->unidadMedida;
+                if ($request->has('descripcion')) $material->descripcion = $request->descripcion;
+                if ($request->has('ubicacion')) $material->ubicacion = $request->ubicacion;
+
+                $material->save();
+            });
+
+            // Recargar la relación
+            $material->load('categoria');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Material actualizado con éxito.',
+                'data' => $material
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ocurrió un error al actualizar el material.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
