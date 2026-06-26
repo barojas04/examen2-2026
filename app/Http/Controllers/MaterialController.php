@@ -2,15 +2,29 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
+use App\Models\Material;
+use Illuminate\Http\JsonResponse;
+=======
 use App\Models\Categoria;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+>>>>>>> 1cdd63a812214f83d7c1990c546eaa3868e2bd42
 
 class MaterialController extends Controller
 {
     /**
+<<<<<<< HEAD
+     * Obtener la lista de materiales y las categorías asociadas.
+     */
+    public function index(): JsonResponse
+    {
+        $materiales = Material::with('categoria')->get();
+
+        return response()->json($materiales);
+=======
      * Almacena un nuevo material en la base de datos y lo asocia a una categoría.
      * Si la categoría no existe, la crea dinámicamente.
      */
@@ -143,5 +157,6 @@ class MaterialController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+>>>>>>> 1cdd63a812214f83d7c1990c546eaa3868e2bd42
     }
 }
