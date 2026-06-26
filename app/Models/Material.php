@@ -10,6 +10,7 @@ class Material extends Model {
     protected $table = 'materiales';
     protected $primaryKey = 'codigo';
     public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['codigo', 'unidadMedida', 'descripcion', 'ubicacion', 'idCategoria'];
 
     // Muchas materiales pertenecen a una categoría
